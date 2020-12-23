@@ -1,0 +1,8 @@
+{
+  "build": {
+    "env": {
+      "NODEJS_HELPERS": "1"
+    }
+  }
+}
+
