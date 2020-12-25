@@ -1,32 +1,20 @@
 module.exports = (req, res) => {
-  console.log('Starting')
   const NEWLINE = '\n';
-  const debug   = false;
-  const indent  = req.query.indent ? Number(req.query.indent) : 2;
+  const DEFAULT_INDENT = 2;
 
-  if (debug) {
-    console.debug('Debug is enabled');
-    console.debug('Indent:', indent);
-    console.debug('Body received:', req.body);
-  }
+  const indent  = req.query.indent ? Number(req.query.indent) : DEFAULT_INDENT;
 
-  let lines;
-  if (req.body)
-    lines = req.body;
-  else {
+  if (!req.body) {
     res.status(400).send('No JSON found\n');
     return;
   }
 
-  if (debug)
-    console.debug('Raw lines:', lines);
+  try {
+    const object = JSON.parse(req.body);
+    const result = JSON.stringify(object, null, indent);
 
-  const object = JSON.parse(lines);
-  const result = JSON.stringify(object, null, indent);
-
-  if (debug)
-    console.debug('Stringified:', result);
-
-  console.log('Finishing')
-  res.status(200).send(result+NEWLINE)
+    res.status(200).send(result+NEWLINE);
+  } catch(err) {
+    res.status(400).send(`Not valid JSON input: ${err}\n`);
+  }
 }
